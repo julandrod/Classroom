@@ -1,16 +1,16 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const { StatusCodes } = require("http-status-codes");
 
 // Obtener usuarios
 const getUsers = async (req, res) => {
   try {
-    const users = await User.find();
-    const usersnames = users.map((user) => {
-      return { userId: user._id, username: user.username };
-    });
-    res.status(200).json(usersnames);
+    const users = await User.find({ role: "alumno" }).select("-password");
+    res.status(StatusCodes.OK).json({ users });
   } catch (error) {
-    res.status(500).json(error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
 

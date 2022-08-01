@@ -1,6 +1,6 @@
 const User = require("../models/User");
-const bcrypt = require("bcrypt");
 const { StatusCodes } = require("http-status-codes");
+const { createTokenUser, createJWT } = require("../utils");
 
 const registerUser = async (req, res) => {
   try {
@@ -13,9 +13,7 @@ const registerUser = async (req, res) => {
     // Primer usuario registrado obtiene el rol de admin
     const isFirstAccount = (await User.countDocuments({})) === 0;
     const role = isFirstAccount ? "admin" : "alumno";
-
     const user = await User.create({ ...req.body, role });
-    // agregar JWT
     res.status(StatusCodes.OK).json({ user });
   } catch (error) {
     res
@@ -26,16 +24,28 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
-    !user && res.status(400).json("Datos erroneos");
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new Error("Por favor ingrese email y password");
+    }
 
-    const validation = await bcrypt.compare(req.body.password, user.password);
-    !validation && res.status(400).json("Datos erroneos");
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("No se encontro un usuario con estos datos");
+    }
 
-    const { password, ...rest } = user._doc;
-    res.status(200).json(rest);
+    const isPasswordCorrect = await user.comparePassword(password);
+    if (!isPasswordCorrect) {
+      throw new Error("Datos de acceso invalidos");
+    }
+
+    const tokenUser = createTokenUser(user);
+    const token = createJWT({ payload: tokenUser });
+    res.status(StatusCodes.OK).json({ user: tokenUser, token });
   } catch (error) {
-    res.status(500).json(error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
 

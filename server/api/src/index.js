@@ -14,8 +14,8 @@ app.use(express.json());
 const port = process.env.PORT || 8080;
 
 app.use("/api/v1/auth", authRoute);
-app.use("/users", usersRoute);
-app.use("/messages", messagesRoute);
+app.use("/api/v1/users", usersRoute);
+app.use("/api/v1/messages", messagesRoute);
 
 const startServer = async () => {
   try {
