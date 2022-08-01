@@ -1,25 +1,29 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const { StatusCodes } = require("http-status-codes");
 
-// Registro
 const registerUser = async (req, res) => {
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(req.body.password, salt);
-    const newUser = new User({
-      username: req.body.username,
-      email: req.body.email,
-      rol: req.body.rol,
-      password: hashedPassword,
-    });
-    const user = await newUser.save();
-    res.status(200).json(user);
+    const { email } = req.body;
+    const emailAlreadyExists = await User.findOne({ email });
+
+    if (emailAlreadyExists) {
+      throw new Error("Este email ya esta registrado");
+    }
+    // Primer usuario registrado obtiene el rol de admin
+    const isFirstAccount = (await User.countDocuments({})) === 0;
+    const role = isFirstAccount ? "admin" : "alumno";
+
+    const user = await User.create({ ...req.body, role });
+    // agregar JWT
+    res.status(StatusCodes.OK).json({ user });
   } catch (error) {
-    res.status(500).json(error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
 
-// Login
 const loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
