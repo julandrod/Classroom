@@ -15,7 +15,7 @@ const Chat = () => {
 
   useEffect(() => {
     const getChatMessages = async () => {
-      const response = await axios.get("/messages");
+      const response = await axios.get("/api/v1/messages");
       setMensajes(response.data);
     };
     getChatMessages();

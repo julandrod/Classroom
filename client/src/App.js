@@ -2,11 +2,8 @@ import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Navbar from "./components/Navbar/Navbar";
-import Clase from "./pages/Clase/Clase";
-import Error from "./pages/Error/Error";
-import Home from "./pages/Home/Home";
-import Login from "./pages/Login/Login";
-import Registro from "./pages/Registro/Registro";
+import { Clase, Error, Home, Login, Registro } from "./pages";
+import Test from "./pages/Test";
 import { selectUser } from "./store/userSlice";
 
 function App() {
@@ -18,8 +15,11 @@ function App() {
 
   return (
     <Router>
-      {user ? <Navbar /> : null}
+      {user && <Navbar />}
       <Switch>
+        <Route exact path="/test">
+          <Test />
+        </Route>
         <Route exact path="/">
           {user ? <Clase /> : <Home />}
         </Route>

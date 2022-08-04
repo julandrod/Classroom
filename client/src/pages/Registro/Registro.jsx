@@ -3,6 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import logo from "../../assets/logo.png";
 import { Link } from "react-router-dom";
+import { HomeLayout } from "../../components";
 
 const Registro = () => {
   const [usuario, setUsuario] = useState({
@@ -15,7 +16,7 @@ const Registro = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/auth/register", {
+      const response = await axios.post("/api/v1/auth/register", {
         username: usuario.username,
         email: usuario.email,
         rol: usuario.rol,
@@ -28,10 +29,8 @@ const Registro = () => {
   };
 
   return (
-    <Wrapper>
-      <div className="registerBackground">
-        <img src={logo} alt="logo" className="logo" />
-        <span className="title">Registro</span>
+    <HomeLayout title="Registro">
+      <Wrapper>
         <form className="form" onSubmit={handleSubmit}>
           <label>Nombre de usuario</label>
           <input
@@ -84,45 +83,19 @@ const Registro = () => {
         <span className="loginOption">
           ¿Ya tienes una cuenta? <Link to="/ingreso">Ingresar</Link>
         </span>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </HomeLayout>
   );
 };
 
 const Wrapper = styled.main`
-  height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.5)
-    ),
-    url("https://images.pexels.com/photos/172277/pexels-photo-172277.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
-  background-size: cover;
-  .registerBackground {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 400px;
-    height: 500px;
-    background-color: white;
-    border-radius: 10px;
-    padding: 50px;
-  }
-  .logo {
-    width: 300px;
-    position: absolute;
-    top: 100px;
-  }
-  .title {
-    margin-top: 20px;
-    font-size: 30px;
-  }
   .form {
-    margin-top: 20px;
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
   }
   .form > label {
@@ -145,7 +118,7 @@ const Wrapper = styled.main`
     width: 200px;
   }
   .loginOption {
-    margin-top: 30px;
+    margin-top: 20px;
   }
   .loginOption > a {
     color: #cc6704;

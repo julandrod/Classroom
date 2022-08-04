@@ -3,53 +3,51 @@ import React, { useRef } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import logo from "../../assets/logo.png";
+import { HomeLayout } from "../../components";
 import { login } from "../../store/userSlice";
 
 const Login = () => {
-  const usernameRef = useRef();
+  const emailRef = useRef();
   const passwordRef = useRef();
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/auth/login", {
-        username: usernameRef.current.value,
+      const { data } = await axios.post("/api/v1/auth/login", {
+        email: emailRef.current.value,
         password: passwordRef.current.value,
       });
-      console.log(response);
+      console.log(data);
       dispatch(
         login({
-          userId: response.data._id,
-          username: response.data.username,
-          email: response.data.email,
-          rol: response.data.rol,
+          userId: data.user._id,
+          username: data.user.username,
+          email: data.user.email,
+          rol: data.user.rol,
         })
       );
-      window.location.replace("/clase")
-    } catch (error) { }
+      window.location.replace("/clase");
+    } catch (error) {}
   };
 
   return (
-    <Wrapper>
-      <div className="loginBackground">
-        <img src={logo} alt="logo" className="logo" />
-        <span className="title">Ingresar</span>
+    <HomeLayout title="Ingresar">
+      <Wrapper>
         <form className="form" onSubmit={handleSubmit}>
-          <label>Nombre de usuario</label>
+          <label>Email</label>
           <input
             className="loginInput"
             type="text"
-            placeholder="Ingrese un nombre de usuario..."
-            ref={usernameRef}
+            placeholder="Ingrese su correo..."
+            ref={emailRef}
             autoFocus
           />
           <label>Contraseña</label>
           <input
             className="loginInput"
             type="password"
-            placeholder="Ingrese una contraseña..."
+            placeholder="Ingrese su contraseña..."
             ref={passwordRef}
           />
           <button type="submit" className="loginButton">
@@ -59,46 +57,20 @@ const Login = () => {
         <span className="loginOption">
           ¿No tienes una cuenta? <Link to="/registro">Crear cuenta</Link>
         </span>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </HomeLayout>
   );
 };
 
-const Wrapper = styled.main`
-  height: 100vh;
+const Wrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(
-      rgba(255, 255, 255, 0.5),
-      rgba(255, 255, 255, 0.5)
-    ),
-    url("https://images.pexels.com/photos/172277/pexels-photo-172277.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
-  background-size: cover;
-  .loginBackground {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 400px;
-    height: 500px;
-    background-color: white;
-    border-radius: 10px;
-    padding: 50px;
-  }
-  .logo {
-    width: 300px;
-    position: absolute;
-    top: 100px;
-  }
-  .title {
-    margin-top: 20px;
-    font-size: 30px;
-  }
   .form {
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
+    margin-top: 50px;
   }
   .form > label {
     margin: 10px 0;
