@@ -1,13 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../store/userSlice";
+import {  selectUserState } from "../../store/userSlice";
 import { io } from "socket.io-client";
 import Message from "../Message/Message";
 import styled from "styled-components";
 
 const Chat = () => {
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUserState);
   const [input, setInput] = useState("");
 
   const socket = useRef();

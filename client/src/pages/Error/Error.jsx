@@ -2,10 +2,10 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import { selectUser } from "../../store/userSlice";
+import {  selectUserState } from "../../store/userSlice";
 
 const Error = () => {
-  const user = useSelector(selectUser);
+  const user = useSelector(selectUserState);
 
   return (
     <Wrapper>

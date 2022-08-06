@@ -1,46 +1,58 @@
-import axios from "axios";
-import React, { useRef } from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
 import styled from "styled-components";
 import { HomeLayout } from "../../components";
-import { login } from "../../store/userSlice";
+import {
+  displayAlert,
+  getUserInfoLogin,
+  selectUserState,
+} from "../../store/userSlice";
 
 const Login = () => {
-  const emailRef = useRef();
-  const passwordRef = useRef();
+  const [userInfo, setUserInfo] = useState({
+    email: "",
+    password: "",
+  });
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { userLoading, userError, errorInfo, token } =
+    useSelector(selectUserState);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const { data } = await axios.post("/api/v1/auth/login", {
-        email: emailRef.current.value,
-        password: passwordRef.current.value,
-      });
-      console.log(data);
-      dispatch(
-        login({
-          userId: data.user._id,
-          username: data.user.username,
-          email: data.user.email,
-          rol: data.user.rol,
-        })
-      );
-      window.location.replace("/clase");
-    } catch (error) {}
+
+    dispatch(
+      getUserInfoLogin({ email: userInfo.email, password: userInfo.password })
+    );
   };
 
+  useEffect(() => {
+    if (userError) {
+      dispatch(displayAlert({ alertText: errorInfo, alertType: "danger" }));
+    }
+    if (token) {
+      dispatch(displayAlert({ alertText: "Ingresando a la clase...", alertType: "success" }));
+      setTimeout(() => {
+        history.push("/clase");
+      }, 3000);
+    }
+  }, [history, token, dispatch, userError, errorInfo]);
+
   return (
-    <HomeLayout title="Ingresar">
+    <HomeLayout title="Ingresar" message={errorInfo}>
       <Wrapper>
         <form className="form" onSubmit={handleSubmit}>
           <label>Email</label>
           <input
             className="loginInput"
-            type="text"
+            type="email"
             placeholder="Ingrese su correo..."
-            ref={emailRef}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, email: e.target.value })
+            }
+            value={userInfo.email}
             autoFocus
           />
           <label>Contraseña</label>
@@ -48,7 +60,10 @@ const Login = () => {
             className="loginInput"
             type="password"
             placeholder="Ingrese su contraseña..."
-            ref={passwordRef}
+            onChange={(e) =>
+              setUserInfo({ ...userInfo, password: e.target.value })
+            }
+            value={userInfo.password}
           />
           <button type="submit" className="loginButton">
             Login
@@ -70,7 +85,7 @@ const Wrapper = styled.div`
   .form {
     display: flex;
     flex-direction: column;
-    margin-top: 50px;
+    margin-top: 30px;
   }
   .form > label {
     margin: 10px 0;

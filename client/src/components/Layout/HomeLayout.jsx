@@ -1,13 +1,22 @@
+import { useEffect } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
-import logo from "../../assets/logo.png"
+import logo from "../../assets/logo.png";
+import { selectUserState } from "../../store/userSlice";
+import AlertMessage from "../AlertMessage/AlertMessage";
 
 const HomeLayout = ({ children, title }) => {
+  const {showAlert} = useSelector(selectUserState)
+
   return (
     <Wrapper>
       <div className="loginBackground">
         <div className="logoTitleContainer">
           <img src={logo} alt="logo" className="logo" />{" "}
           <span className="title">{title}</span>
+          {/* <span className={`alert alert-${alertType}`}>{message}</span> */}
+          {showAlert && <AlertMessage />}
         </div>
         {children}
       </div>
@@ -37,7 +46,7 @@ const Wrapper = styled.main`
     border-radius: 10px;
     padding: 50px;
   }
-  .logoTitleContainer{
+  .logoTitleContainer {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -47,7 +56,6 @@ const Wrapper = styled.main`
     margin-top: 30px;
     width: 300px;
     border-radius: 10px;
-    
   }
   .title {
     margin: 20px;

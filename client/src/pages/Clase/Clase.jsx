@@ -1,7 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import Chat from "../../components/Chat/Chat";
-import Video from "../../components/Video/Video";
+import { Chat, Video } from "../../components";
 
 const Clase = () => {
   return (

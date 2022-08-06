@@ -27,6 +27,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 50px;
   .welcomeRegisterButton {
     margin-top: 20px;
     cursor: pointer;
